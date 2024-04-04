@@ -11,6 +11,24 @@ public class GameManager : MonoBehaviour
     [SerializeField] int beans;
     [SerializeField] TextMeshProUGUI beanDisplay;
     [SerializeField] GameObject storePage;
+    private bool storePageBool;
+
+    [SerializeField] TextMeshProUGUI fishPrice;
+    [SerializeField] TextMeshProUGUI empPrice;
+    [SerializeField] TextMeshProUGUI cmPrice;
+
+
+
+    public string saleString = "Beans: ";
+
+
+    public int clickMultiplier = 1;
+    public int generateMultipler = 1;
+
+
+    public int fishCost = 50;
+    public int empCost = 10;
+    public int cmCost = 20;
 
 
 
@@ -33,34 +51,83 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(GenerateBean());
-        storePage.SetActive(false);
+        storePageBool = false;
+
+        fishPrice.text = fishCost.ToString();
+        empPrice.text = empCost.ToString();
+        cmPrice.text = cmCost.ToString();
+
+
+
     }
 
     void Update()
     {
-        beanDisplay.text = "Beans: " + beans;
+        beanDisplay.text = saleString + beans.ToString();
     }
 
     private IEnumerator GenerateBean()
     {
-        beans += 1;
+        beans += 1 * generateMultipler;
 
         yield return new WaitForSecondsRealtime(1);
         StartCoroutine(GenerateBean());
     }
     public void Click()
     {
-        beans += 1;
+        beans += 1 * clickMultiplier;
     }
 
-    public void OpenStore()
+    public void StoreButton()
     {
-        storePage.SetActive(true);
+        if (storePageBool == false)
+        {
+            storePage.SetActive(true);
+            storePageBool = true;
+        } else
+        {
+            storePage.SetActive(false);
+            storePageBool = false;
+        }
     }
 
-    public void CloseStore()
+    public void BuyFish()
     {
-        storePage.SetActive(false);
+        if (beans < fishCost)
+        {
+            saleString = "Fish: ";
+            fishPrice.text = "Sold Out";
+
+        }
+    }
+
+    public void BuyCM()
+    {
+        if (beans < cmCost)
+        {
+            return;
+        } else
+        {
+            beans -= cmCost;
+            generateMultipler += 1;
+            cmCost += 20;
+            cmPrice.text = cmCost.ToString();
+        }
+    }
+
+    public void BuyEmp()
+    {
+        if (beans < empCost)
+        {
+            return;
+        }
+        else
+        {
+            beans -= empCost;
+            generateMultipler += 1;
+            empCost += 30;
+            empPrice.text = empCost.ToString();
+        }
     }
 
 
